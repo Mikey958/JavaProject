@@ -1,12 +1,15 @@
 package org.example.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class Student {
-    private final String fullName;  // Фамилия
-    private final String ulearnId;  // Ulearn id
-    private final String group;     // Группа
+    private String ulearnId;  // Ulearn id
+    private String fullName;  // Фамилия
+    private int score;        // Кол-во баллов
+    private String group;     // Группа
 }

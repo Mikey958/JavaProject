@@ -1,12 +1,11 @@
 package org.example.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import java.util.List;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Theme {
-    private String name;                   // Название темы
-    private List<Task> tasks;              // Список заданий
+    private long id;
+    private String name;
 }
