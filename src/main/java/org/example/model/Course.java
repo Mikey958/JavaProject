@@ -1,14 +1,19 @@
 package org.example.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.util.List;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Course {
     private String name;                // Название курса
-    private List<Theme> themes;         // Список тем
     private List<Student> students;     // Список учеников
+    private List<Theme> themes;         // Список тем
+
 
 }
