@@ -1,15 +1,8 @@
 package org.example.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
 
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class Task {
-    private int score;         // Количество баллов
-    private TaskType type;     // Тип задания
+@Builder
+public record Task(String name ,Integer score, TaskType type) {
+
 }

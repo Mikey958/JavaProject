@@ -1,119 +1,127 @@
 package org.example.parser;
 
 import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
-import org.example.model.Student;
 import org.example.model.Theme;
+import org.example.model.Student;
+import org.example.model.Task;
+import org.example.model.TaskType;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class parserCSV {
 
-    // Путь к CSV файлу
-    protected static Path path = Paths.get("java-rtf.csv");
-
-    // Списки для хранения студентов и тем
-    protected static List<Student> studentList = new ArrayList<>();
-    protected static List<Theme> themeList = new ArrayList<>();
-
-    // Метод для парсинга студентов из CSV файла
-    public static void parseStudents() {
-        try (CSVReader reader = new CSVReaderBuilder(
-                // Чтение файла с указанием кодировки Windows-1251 для корректного отображения русских букв
-                new InputStreamReader(new FileInputStream(path.toString()), "Windows-1251"))
-                // Установка разделителя в файле как точка с запятой
-                .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
-                .build()) {
-
-            // Пропуск первых 3 строк
-            reader.skip(3);
-
-            // Чтение всех оставшихся строк
-            List<String[]> records = reader.readAll();
-
-            // Обрабатываем каждую строку и добавляем студента в список
-            for (String[] record : records) {
-                Student student = parseRecord(record);  // Преобразуем строку в объект Student
-                studentList.add(student);  // Добавляем студента в список
-            }
-
-            // Выводим всех студентов на экран
-            studentList.forEach(System.out::println);
-
+    public static List<String[]> readCSVFile(String file) {
+        Path filePath = Path.of(file);  // Используем Path для работы с файлами
+        try (var reader = Files.newBufferedReader(filePath, Charset.forName("windows-1251"))) {
+            var parser = new CSVParserBuilder()
+                    .withSeparator(';')  // Устанавливаем разделитель
+                    .build();
+            var csvReader = new CSVReaderBuilder(reader)
+                    .withCSVParser(parser)
+                    .build();
+            return csvReader.readAll();
         } catch (IOException | CsvException e) {
-            // В случае ошибки выводим стек исключения
-            e.printStackTrace();
+            // Лучше обработать исключения конкретнее, например, выводя сообщение об ошибке
+            throw new RuntimeException("Error reading CSV file: " + file, e);
         }
     }
 
-    // Метод для преобразования строки данных в объект Student
-    private static Student parseRecord(String[] record) {
-        String fullName = record[0];  // Имя студента (первый столбец)
-        String ulearnId = record[1];  // ID студента (второй столбец)
-        String group = record[2];     // Группа студента (третий столбец)
+    public static List<Student> parseStudents(List<String[]> lines) {
+        List<Student> students = new ArrayList<>();
 
-        // Считаем общий балл студента как сумму из 3-х оценок (4, 5 и 6 столбцы)
-        int score = Integer.parseInt(record[3])
-                + Integer.parseInt(record[4])
-                + Integer.parseInt(record[5]);
+        // Начинаем с 3-й строки (0, 1, 2 - это заголовки)
+        for (int i = 3; i < lines.size(); i++) {
+            String[] line = lines.get(i);
 
-        // Возвращаем объект Student с данными
-        return new Student(ulearnId, fullName, score, group);
-    }
+            String name = line[0];  // Имя
+            String id = line[1];     // ID
+            String group = line[2];  // Группа
 
-    // Метод для парсинга тем из CSV файла
-    public static void parseThemes() {
-        try (CSVReader reader = new CSVReaderBuilder(
-                // Чтение файла с кодировкой Windows-1251
-                new InputStreamReader(new FileInputStream(path.toString()), "Windows-1251"))
-                // Установка разделителя как точка с запятой
-                .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
-                .build()) {
-
-            // Чтение первой строки, которая может содержать названия тем
-            String[] firstRow = reader.readNext();
-            if (firstRow == null) {
-                System.out.println("Первая строка пуста");
-                return;
+            // Сумма оценок с безопасным парсингом
+            int finalScore = 0;
+            try {
+                finalScore = Integer.parseInt(line[3]) + Integer.parseInt(line[4]) + Integer.parseInt(line[5]);
+            } catch (NumberFormatException e) {
+                // Обработка ошибки, если оценка не может быть преобразована в число
+                finalScore = 0;  // Можно установить значение по умолчанию, если произошла ошибка
             }
 
-            // Убираем пустые строки из первой строки
-            firstRow = removeEmptyStrings(firstRow);
+            // Парсим главы (темы) для студента
+            var scoreForThemes = parseChapters(lines, i);
 
-            long idCounter = 1;  // Счетчик для уникальных ID тем
-
-            // Начинаем с индекса 1, чтобы пропустить заголовок или ненужное поле в первой ячейке
-            for (int i = 1; i < firstRow.length; i++) {
-                String themeName = firstRow[i].trim();  // Убираем пробелы вокруг названия темы
-                if (!themeName.isEmpty()) {  // Если тема не пуста, добавляем ее в список
-                    Theme theme = new Theme(idCounter++, themeName);  // Создаем объект Theme с уникальным ID
-                    themeList.add(theme);  // Добавляем тему в список
-                }
-            }
-
-            // Выводим все темы на экран
-            themeList.forEach(System.out::println);
-
-        } catch (IOException | CsvException e) {
-            // В случае ошибки выводим стек исключения
-            e.printStackTrace();
+            // Создаем студента и добавляем его в список
+            Student student = new Student(name, id, group, finalScore, scoreForThemes);
+            students.add(student);
         }
+
+        return students;
     }
 
-    // Метод для удаления пустых строк из массива
-    private static String[] removeEmptyStrings(String[] input) {
-        // Используем stream для фильтрации пустых строк
-        return Arrays.stream(input)
-                .filter(s -> s != null && !s.trim().isEmpty())  // Убираем null и пустые строки
-                .toArray(String[]::new);  // Возвращаем отфильтрованный массив
+
+    private static List<Theme> parseChapters(List<String[]> lines, int indexStudent) {
+        List<Theme> chapters = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
+
+        // Получаем строки для глав и задач
+        String[] lineChapters = lines.get(0);  // Заголовок глав
+        String[] lineTasks = lines.get(1);     // Заголовок задач
+
+        String currentThemeName = lineChapters[6];  // Начальное имя темы
+
+        // Итерируем по строкам начиная с 6-го индекса
+        for (int i = 6; i < lineChapters.length; i++) {
+            // Если встретили новую тему, добавляем текущую в список
+            if (!Objects.equals(lineChapters[i], "") && i != 6) {
+                Theme theme = new Theme(currentThemeName, tasks);
+                chapters.add(theme);
+                currentThemeName = lineChapters[i];  // Обновляем название темы
+                tasks = new ArrayList<>();  // Сбрасываем список задач
+            }
+
+            // Обрабатываем задачи
+            Task task = null;
+            if (lineTasks[i].startsWith("КВ:")) {
+                task = createTask(lineTasks[i], lines.get(indexStudent)[i], TaskType.CONTROL_QUESTION);
+            } else if (lineTasks[i].startsWith("УПР:")) {
+                task = createTask(lineTasks[i], lines.get(indexStudent)[i], TaskType.EXERCISE);
+            } else if (lineTasks[i].startsWith("ДЗ:")) {
+                task = createTask(lineTasks[i], lines.get(indexStudent)[i], TaskType.HOMEWORK);
+            }
+
+            if (task != null) {
+                tasks.add(task);  // Добавляем задачу в список
+            }
+        }
+
+        // Добавляем последнюю тему
+        if (!tasks.isEmpty()) {
+            Theme theme = new Theme(currentThemeName, tasks);
+            chapters.add(theme);
+        }
+
+        return chapters;
     }
+
+    // Вспомогательный метод для создания задач
+    private static Task createTask(String taskName, String scoreStr, TaskType taskType) {
+        int score = 0;
+        try {
+            score = Integer.parseInt(scoreStr);  // Преобразуем строку в число
+        } catch (NumberFormatException e) {
+            score = 0;  // Если произошла ошибка, ставим 0 баллов
+        }
+        return new Task(taskName, score, taskType);
+    }
+
 }
