@@ -1,11 +1,10 @@
 package org.example.model;
 
-import lombok.*;
+import lombok.Builder;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Theme {
-    private long id;
-    private String name;
+import java.util.List;
+
+@Builder
+public record Theme(String name, List<Task> tasks){
+
 }
