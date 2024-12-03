@@ -1,10 +1,14 @@
 package org.example.model;
 
-import lombok.Builder;
+import lombok.*;
 
 import java.util.List;
 
-@Builder
-public record Theme(String name, List<Task> tasks){
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Theme{
+    private String name;
+    private List<Task> tasks;
 }

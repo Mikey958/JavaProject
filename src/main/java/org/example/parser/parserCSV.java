@@ -8,32 +8,26 @@ import org.example.model.Student;
 import org.example.model.Task;
 import org.example.model.TaskType;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class parserCSV {
 
-    public static List<String[]> readCSVFile(String file) {
-        Path filePath = Path.of(file);  // Используем Path для работы с файлами
-        try (var reader = Files.newBufferedReader(filePath, Charset.forName("windows-1251"))) {
-            var parser = new CSVParserBuilder()
-                    .withSeparator(';')  // Устанавливаем разделитель
-                    .build();
-            var csvReader = new CSVReaderBuilder(reader)
-                    .withCSVParser(parser)
-                    .build();
-            return csvReader.readAll();
+    public static List<Student> readCSVFile(String file){
+        var parser = new CSVParserBuilder()
+                .withSeparator(';')
+                .build();
+        try (var reader = new CSVReaderBuilder(
+                new InputStreamReader(new FileInputStream(file), "windows-1251"))
+                .withCSVParser(parser)
+                .build()) {
+            return parseStudents(reader.readAll());
         } catch (IOException | CsvException e) {
-            // Лучше обработать исключения конкретнее, например, выводя сообщение об ошибке
-            throw new RuntimeException("Error reading CSV file: " + file, e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -58,7 +52,7 @@ public class parserCSV {
             }
 
             // Парсим главы (темы) для студента
-            var scoreForThemes = parseChapters(lines, i);
+            var scoreForThemes = parseThemes(lines, i);
 
             // Создаем студента и добавляем его в список
             Student student = new Student(name, id, group, finalScore, scoreForThemes);
@@ -69,8 +63,8 @@ public class parserCSV {
     }
 
 
-    private static List<Theme> parseChapters(List<String[]> lines, int indexStudent) {
-        List<Theme> chapters = new ArrayList<>();
+    private static List<Theme> parseThemes(List<String[]> lines, int indexStudent) {
+        List<Theme> themes = new ArrayList<>();
         List<Task> tasks = new ArrayList<>();
 
         // Получаем строки для глав и задач
@@ -84,7 +78,7 @@ public class parserCSV {
             // Если встретили новую тему, добавляем текущую в список
             if (!Objects.equals(lineChapters[i], "") && i != 6) {
                 Theme theme = new Theme(currentThemeName, tasks);
-                chapters.add(theme);
+                themes.add(theme);
                 currentThemeName = lineChapters[i];  // Обновляем название темы
                 tasks = new ArrayList<>();  // Сбрасываем список задач
             }
@@ -107,10 +101,10 @@ public class parserCSV {
         // Добавляем последнюю тему
         if (!tasks.isEmpty()) {
             Theme theme = new Theme(currentThemeName, tasks);
-            chapters.add(theme);
+            themes.add(theme);
         }
 
-        return chapters;
+        return themes;
     }
 
     // Вспомогательный метод для создания задач
