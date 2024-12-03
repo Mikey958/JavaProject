@@ -2,8 +2,17 @@ package org.example.model;
 
 import lombok.*;
 import java.util.List;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 
-@Builder
-public record Student(String name, String id, String group, Integer finalScore, List<Theme> scoreForChapters){
+public class Student{
+    private String name;
+    private String id;
+    private String group;
+    private Integer finalScore;
+    private List<Theme> scoreForThemes;
+
 
 }

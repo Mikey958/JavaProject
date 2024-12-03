@@ -1,8 +1,13 @@
 package org.example.model;
 
-import lombok.Builder;
+import lombok.*;
 
-@Builder
-public record Task(String name ,Integer score, TaskType type) {
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Task {
+    private String name;
+    private Integer score;
+    private TaskType type;
 }

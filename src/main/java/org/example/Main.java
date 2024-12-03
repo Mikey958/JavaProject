@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
 
         // Чтение CSV и вывод студентов
-        var values = parserCSV.readCSVFile("java-rtf.csv");
+        var students = parserCSV.readCSVFile("java-rtf.csv");
 
         try {
             OutputStream out = System.out;
@@ -23,7 +23,6 @@ public class Main {
             System.setOut(ps);
 
             // Чтение студентов из CSV и вывод информации
-            List<Student> students = parserCSV.parseStudents(values);
             for (var student : students) {
                 System.out.println(student);
             }

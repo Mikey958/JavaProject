@@ -14,6 +14,4 @@ public class Course {
     private String name;                // Название курса
     private List<Student> students;     // Список учеников
     private List<Theme> themes;         // Список тем
-
-
 }
