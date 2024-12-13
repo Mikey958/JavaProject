@@ -29,10 +29,6 @@ public class GroupEntity {
     @JsonIgnore // Скрытие данных студентов в API
     private List<StudentEntity> students = new ArrayList<>();
 
-    /**
-     * Добавление студента в группу.
-     * @param student студент, которого нужно добавить.
-     */
     public void addStudent(StudentEntity student) {
         students.add(student);
         student.setGroup(this);

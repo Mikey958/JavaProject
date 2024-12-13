@@ -2,8 +2,23 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/diagramms/AllThemes.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeEight.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeEleven.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeFive.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeFour.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeNine.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeOne.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeSeven.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeSix.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeTen.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeThree.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeTwelve.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/diagramms/ThemeTwo.png" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/example/API/CurrencyConverter.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/example/Main.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/org/example/controller/GroupController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/org/example/drawer/DrawerWindow.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/example/parser/parserCSV.java" charset="UTF-8" />
   </component>
 </project>
