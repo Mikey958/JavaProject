@@ -3,7 +3,7 @@ package org.example.controller;
 import org.example.entity.GroupEntity;
 import org.example.model.Group;
 import org.example.model.Student;
-import org.example.service.GroupService;
+import org.example.service.Service;
 import org.example.parser.parserCSV;
 import org.example.drawer.Drawer;
 import org.modelmapper.ModelMapper;
@@ -23,10 +23,10 @@ import java.util.List;
 @RequestMapping("/groups")
 public class GroupController {
 
-    private final GroupService groupService;
+    private final Service groupService;
     private final ModelMapper modelMapper;
 
-    public GroupController(GroupService groupService, ModelMapper modelMapper) {
+    public GroupController(Service groupService, ModelMapper modelMapper) {
         this.groupService = groupService;
         this.modelMapper = modelMapper;
     }

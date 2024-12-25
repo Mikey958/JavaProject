@@ -8,7 +8,6 @@ import org.example.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,14 +16,14 @@ import java.util.Optional;
 /**
  * Сервис для работы с группами студентов.
  */
-@Service
-public class GroupService {
+@org.springframework.stereotype.Service
+public class Service {
 
     private final Repository groupRepository;
-    private static final Logger logger = LoggerFactory.getLogger(GroupService.class);
+    private static final Logger logger = LoggerFactory.getLogger(Service.class);
 
     @Autowired
-    public GroupService(Repository groupRepository) {
+    public Service(Repository groupRepository) {
         this.groupRepository = groupRepository;
     }
 
