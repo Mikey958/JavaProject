@@ -21,7 +21,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34") // или последняя доступная версия
     annotationProcessor("org.projectlombok:lombok:1.18.34")
     implementation("commons-io:commons-io:2.14.0")
-
+    implementation("org.hibernate.validator:hibernate-validator:6.2.0.Final")  // Актуальная версия
+    implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("org.springframework.boot:spring-boot")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")

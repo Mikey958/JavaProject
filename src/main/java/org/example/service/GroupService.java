@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * РЎРµСЂРІРёСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РіСЂСѓРїРїР°РјРё СЃС‚СѓРґРµРЅС‚РѕРІ.
+ */
 @Service
 public class GroupService {
 
@@ -25,61 +28,95 @@ public class GroupService {
         this.groupRepository = groupRepository;
     }
 
+    /**
+     * РќР°С…РѕРґРёС‚ РіСЂСѓРїРїСѓ РїРѕ РёРјРµРЅРё.
+     *
+     * @param name РёРјСЏ РіСЂСѓРїРїС‹
+     * @return РѕР±СЉРµРєС‚ GroupEntity, РµСЃР»Рё РіСЂСѓРїРїР° РЅР°Р№РґРµРЅР°
+     */
     public Optional<GroupEntity> findByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            logger.warn("Group name is null or empty.");
+            return Optional.empty(); // Р”РѕР±Р°РІР»РµРЅР° РїСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕРµ РёРјСЏ РіСЂСѓРїРїС‹
+        }
         return groupRepository.findByName(name);
     }
 
+    /**
+     * РЎРѕС…СЂР°РЅСЏРµС‚ РіСЂСѓРїРїСѓ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С….
+     *
+     * @param group РіСЂСѓРїРїР° РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ
+     * @return СЃРѕС…СЂР°РЅРµРЅРЅР°СЏ РіСЂСѓРїРїР°
+     */
     public GroupEntity save(GroupEntity group) {
+        if (group == null) {
+            logger.error("Attempt to save null group.");
+            throw new IllegalArgumentException("Group cannot be null");
+        }
+        logger.info("Saving group: {}", group.getName());
         return groupRepository.save(group);
     }
 
+    /**
+     * РџРѕР»СѓС‡РµРЅРёРµ РІСЃРµС… РіСЂСѓРїРї.
+     *
+     * @return СЃРїРёСЃРѕРє РІСЃРµС… РіСЂСѓРїРї
+     */
     public List<GroupEntity> findAll() {
         return groupRepository.findAll();
     }
 
     /**
-     * Сохраняет студентов в соответствующие группы.
-     * Каждый студент будет добавлен в свою группу. Если группа не существует, она будет создана.
-     * @param students Список студентов.
+     * РЎРѕС…СЂР°РЅСЏРµС‚ СЃС‚СѓРґРµРЅС‚РѕРІ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёРµ РіСЂСѓРїРїС‹.
+     * Р•СЃР»Рё РіСЂСѓРїРїР° РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, РѕРЅР° Р±СѓРґРµС‚ СЃРѕР·РґР°РЅР°.
+     *
+     * @param students РЎРїРёСЃРѕРє СЃС‚СѓРґРµРЅС‚РѕРІ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ
      */
     @Transactional
     public void saveStudentsWithGroups(List<Student> students) {
+        logger.info("Saving students with their groups.");
         for (Student student : students) {
             GroupEntity group = findOrCreateGroup(student.getGroup());
-
             StudentEntity studentEntity = StudentMapper.toEntity(student);
 
             group.getStudents().add(studentEntity);
             studentEntity.setGroup(group);
 
-            // Группа сохраняется только один раз в конце
-            if (!group.getStudents().isEmpty()) {
-                save(group);
+            // РЎРѕС…СЂР°РЅСЏРµРј РіСЂСѓРїРїСѓ С‚РѕР»СЊРєРѕ РѕРґРёРЅ СЂР°Р· РІ РєРѕРЅС†Рµ
+            if (group.getStudents().size() == 1) {
+                save(group); // Р“СЂСѓРїРїР° СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РѕРґРёРЅ СЂР°Р·, РµСЃР»Рё СЃС‚СѓРґРµРЅС‚С‹ РґРѕР±Р°РІР»СЏСЋС‚СЃСЏ РІРїРµСЂРІС‹Рµ
             }
         }
     }
 
     /**
-     * Находит группу по имени или создает новую, если группа не найдена.
-     * @param groupName Имя группы.
-     * @return Существующая или новая группа.
+     * РќР°С…РѕРґРёС‚ РіСЂСѓРїРїСѓ РїРѕ РёРјРµРЅРё РёР»Рё СЃРѕР·РґР°РµС‚ РЅРѕРІСѓСЋ, РµСЃР»Рё РіСЂСѓРїРїР° РЅРµ РЅР°Р№РґРµРЅР°.
+     *
+     * @param groupName РРјСЏ РіСЂСѓРїРїС‹
+     * @return СЃСѓС‰РµСЃС‚РІСѓСЋС‰Р°СЏ РёР»Рё РЅРѕРІР°СЏ РіСЂСѓРїРїР°
      */
     public GroupEntity findOrCreateGroup(String groupName) {
-        return this.findByName(groupName)
+        return groupRepository.findByName(groupName)
                 .orElseGet(() -> {
                     GroupEntity group = new GroupEntity();
                     group.setName(groupName);
                     logger.info("Group with name '{}' not found, creating new group.", groupName);
-                    return this.save(group);
+                    return save(group);
                 });
     }
 
     /**
-     * Пример улучшения с использованием computeIfAbsent.
-     * Этот метод гарантирует, что группа будет создана только в случае её отсутствия.
-     * Сохраняет или создает группу, если ее еще нет.
+     * РќР°С…РѕРґРёС‚ РёР»Рё СЃРѕР·РґР°РµС‚ РіСЂСѓРїРїСѓ, РёСЃРїРѕР»СЊР·СѓСЏ computeIfAbsent.
+     * Р­С‚РѕС‚ РјРµС‚РѕРґ СЃРѕР·РґР°РµС‚ РіСЂСѓРїРїСѓ С‚РѕР»СЊРєРѕ РІ СЃР»СѓС‡Р°Рµ РµС‘ РѕС‚СЃСѓС‚СЃС‚РІРёСЏ.
+     *
+     * @param groupName РРјСЏ РіСЂСѓРїРїС‹
+     * @return СЃСѓС‰РµСЃС‚РІСѓСЋС‰Р°СЏ РёР»Рё РЅРѕРІР°СЏ РіСЂСѓРїРїР°
      */
     public GroupEntity findOrCreateGroupUsingMap(String groupName) {
+        if (groupName == null || groupName.trim().isEmpty()) {
+            logger.warn("Group name is null or empty.");
+            return null; // Р’РѕР·РІСЂР°С‰Р°РµРј null, РµСЃР»Рё РёРјСЏ РіСЂСѓРїРїС‹ РїСѓСЃС‚РѕРµ
+        }
         return groupRepository.findByName(groupName)
                 .orElseGet(() -> {
                     GroupEntity group = new GroupEntity();

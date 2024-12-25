@@ -27,14 +27,11 @@ public class Main {
                 System.out.println(student);
             }
 
-            // Выводим строку "Пример конвертации валют"
             System.out.println("\nКонвертация рубля в 10 разных валют:");
 
-            // Конвертируем 100 рублей в 10 разных валют
             double amount = 100.0; // Исходная сумма
             String fromCurrency = "RUB"; // Исходная валюта - рубли
 
-            // Список валют, в которые будем конвертировать
             String[] toCurrencies = {
                     "USD", // Доллар США
                     "EUR", // Евро

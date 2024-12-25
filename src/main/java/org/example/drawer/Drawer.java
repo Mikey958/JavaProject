@@ -18,55 +18,72 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Класс для рисования графиков.
+ */
 public class Drawer {
     private String title;
 
+    /**
+     * Конструктор класса.
+     *
+     * @param title Название графика
+     */
     public Drawer(String title) {
         this.title = title;
     }
 
+    /**
+     * Метод для создания и сохранения линейного графика.
+     *
+     * @param groups Список групп для построения графика
+     * @param filePath Путь для сохранения изображения графика
+     * @return Файл с изображением графика
+     * @throws IOException При возникновении ошибок с файловыми операциями
+     */
     public File createChartFile(List<Group> groups, String filePath) throws IOException {
-        CategoryDataset dataset = ChartDataMapper.createScoresByThemes(groups); // Используем новый метод
+        // Создание набора данных на основе информации о группах
+        CategoryDataset dataset = ChartDataMapper.createScoresByThemes(groups);
+
+        // Создание линейного графика
         JFreeChart chart = ChartFactory.createLineChart(
                 title,                 // Заголовок графика
-                "Theme",               // Ось X (Темы)
-                "Score",               // Ось Y (Баллы)
-                dataset,               // Данные
+                "Theme",               // Ось X
+                "Score",               // Ось Y
+                dataset,               // Данные для графика
                 PlotOrientation.VERTICAL,  // Ориентация графика
                 true,                  // Легенда
-                true,                  // Инструменты
-                false                  // URL
+                true,                  // Подсказки
+                false                  // Включение ссылок на URL
         );
 
-        chart.setBackgroundPaint(Color.WHITE);  // Белый фон для всего графика
+        chart.setBackgroundPaint(Color.WHITE);  // Установка белого фона для графика
 
-        // Получаем CategoryPlot для настройки
+        // Настройка внешнего вида графика
         CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.LIGHT_GRAY);
+        plot.setBackgroundPaint(Color.LIGHT_GRAY); // Легкий фон графика
 
-        // Настройка цвета и стиля сетки
-        plot.setDomainGridlinePaint(Color.BLACK);  // Вертикальная сетка
-        plot.setRangeGridlinePaint(Color.BLACK);   // Горизонтальная сетка
+        plot.setDomainGridlinePaint(Color.BLACK);  // Линии сетки по оси X
+        plot.setRangeGridlinePaint(Color.BLACK);   // Линии сетки по оси Y
 
-        // Настройка цветов линий
+        // Настройка стиля графика
         LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+        renderer.setSeriesPaint(0, Color.RED);      // Цвет линии для серии 0
+        renderer.setSeriesPaint(1, Color.YELLOW);   // Цвет линии для серии 1
+        renderer.setSeriesPaint(2, Color.ORANGE);    // Цвет линии для серии 2
+        renderer.setSeriesPaint(3, Color.CYAN);     // Цвет линии для серии 3
+        renderer.setSeriesPaint(4, Color.MAGENTA);  // Цвет линии для серии 4
+        renderer.setSeriesPaint(5, Color.BLUE);     // Цвет линии для серии 5
 
-        renderer.setSeriesPaint(0, Color.RED);      // Первая линия — красный
-        renderer.setSeriesPaint(1, Color.YELLOW);   // Вторая линия — желтый
-        renderer.setSeriesPaint(2, Color.ORANGE);    // Третья линия — зеленый
-        renderer.setSeriesPaint(3, Color.CYAN);     // Четвертая линия — голубой
-        renderer.setSeriesPaint(4, Color.MAGENTA);  // Пятая линия — фиолетовый
-        renderer.setSeriesPaint(5, Color.BLUE);     // Шестая линия — синий
+        // Установка толщины линий для всех серий
+        renderer.setSeriesStroke(0, new BasicStroke(2.0f));  // Толщина линии для серии 0
+        renderer.setSeriesStroke(1, new BasicStroke(2.0f));  // Толщина линии для серии 1
+        renderer.setSeriesStroke(2, new BasicStroke(2.0f));  // Толщина линии для серии 2
+        renderer.setSeriesStroke(3, new BasicStroke(2.0f));  // Толщина линии для серии 3
+        renderer.setSeriesStroke(4, new BasicStroke(2.0f));  // Толщина линии для серии 4
+        renderer.setSeriesStroke(5, new BasicStroke(2.0f));  // Толщина линии для серии 5
 
-        // Настройка толщины линий для каждой серии
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f));  // Толщина линии для первой серии
-        renderer.setSeriesStroke(1, new BasicStroke(2.0f));  // Толщина линии для второй серии
-        renderer.setSeriesStroke(2, new BasicStroke(2.0f));  // Толщина линии для третьей серии
-        renderer.setSeriesStroke(3, new BasicStroke(2.0f));  // Толщина линии для четвертой серии
-        renderer.setSeriesStroke(4, new BasicStroke(2.0f));  // Толщина линии для пятой серии
-        renderer.setSeriesStroke(5, new BasicStroke(2.0f));  // Толщина линии для шестой серии
-
-        // Включаем отображение точек на линиях и меняем форму точек
+        // Установка видимости точек на графике
         renderer.setSeriesShapesVisible(0, true);
         renderer.setSeriesShapesVisible(1, true);
         renderer.setSeriesShapesVisible(2, true);
@@ -74,71 +91,82 @@ public class Drawer {
         renderer.setSeriesShapesVisible(4, true);
         renderer.setSeriesShapesVisible(5, true);
 
-        // Настройка формы точек (пустой круг)
-        int circleSize = 10;  // Радиус круга
+        // Установка формы точек (пустой круг)
+        int circleSize = 10;
         Ellipse2D.Double emptyCircle = new Ellipse2D.Double((double) -circleSize / 2, (double) -circleSize / 2, circleSize, circleSize);
-        renderer.setSeriesShape(0, emptyCircle);  // Пустой круг для первой линии
-        renderer.setSeriesShape(1, emptyCircle);  // Пустой круг для второй линии
-        renderer.setSeriesShape(2, emptyCircle);  // Пустой круг для третьей линии
-        renderer.setSeriesShape(3, emptyCircle);  // Пустой круг для четвертой линии
-        renderer.setSeriesShape(4, emptyCircle);  // Пустой круг для пятой линии
-        renderer.setSeriesShape(5, emptyCircle);  // Пустой круг для шестой линии
+        renderer.setSeriesShape(0, emptyCircle);
+        renderer.setSeriesShape(1, emptyCircle);
+        renderer.setSeriesShape(2, emptyCircle);
+        renderer.setSeriesShape(3, emptyCircle);
+        renderer.setSeriesShape(4, emptyCircle);
+        renderer.setSeriesShape(5, emptyCircle);
 
-        // Применяем рендерер к графику
+        // Применение рендерера к графику
         chart.getCategoryPlot().setRenderer(renderer);
 
-        // Сохраняем график в файл
+        // Сохранение графика в файл
         File chartFile = new File(filePath);
         ChartUtils.saveChartAsPNG(chartFile, chart, 1920, 1080);
         return chartFile;
     }
 
+    /**
+     * Метод для создания и сохранения горизонтального столбчатого графика для конкретной темы.
+     *
+     * @param groups Список групп для построения графика
+     * @param themeNumber Номер темы для отображения
+     * @param filePath Путь для сохранения изображения графика
+     * @return Файл с изображением графика
+     * @throws IOException При возникновении ошибок с файловыми операциями
+     */
     public File createChartFile(List<Group> groups, String themeNumber, String filePath) throws IOException {
+        // Создание набора данных для конкретной темы
         CategoryDataset dataset = ChartDataMapper.createScoresThemesByGroups(groups, themeNumber);
+
+        // Создание столбчатого графика
         JFreeChart chart = ChartFactory.createBarChart(
                 title,                 // Заголовок графика
-                "Group",               // Ось X (названия тем)
-                "Score",               // Ось Y (баллы)
-                dataset,               // Данные
+                "Group",               // Ось X (Группы)
+                "Score",               // Ось Y (Оценки)
+                dataset,               // Данные для графика
                 PlotOrientation.HORIZONTAL, // Ориентация графика
                 true,                  // Легенда
-                true,                  // Инструменты
-                false                  // URL
+                true,                  // Подсказки
+                false                  // Включение ссылок на URL
         );
 
-        chart.setBackgroundPaint(Color.WHITE);  // Белый фон для всего графика
+        chart.setBackgroundPaint(Color.WHITE);  // Установка белого фона для графика
 
-        // Получаем CategoryPlot для настройки
+        // Настройка внешнего вида графика
         CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.LIGHT_GRAY);
+        plot.setBackgroundPaint(Color.LIGHT_GRAY); // Легкий фон графика
 
-        // Настройка цвета и стиля сетки
-        plot.setDomainGridlinePaint(Color.BLACK);  // Вертикальная сетка
-        plot.setRangeGridlinePaint(Color.BLACK);   // Горизонтальная сетка
+        plot.setDomainGridlinePaint(Color.BLACK);  // Линии сетки по оси X
+        plot.setRangeGridlinePaint(Color.BLACK);   // Линии сетки по оси Y
 
         BarRenderer renderer = new BarRenderer();
 
+        // Установка цвета для столбцов
         renderer.setSeriesPaint(0, Color.GRAY);
 
-        // Убираем тени
+        // Отключение теней для столбцов
         renderer.setShadowVisible(false);
 
-        // Отключаем эффект 3D, делаем столбцы плоскими
+        // Применение 3D-эффекта для столбцов
         renderer.setBarPainter(new StandardBarPainter());
 
-        // Устанавливаем черную обводку для столбцов
-        renderer.setSeriesOutlinePaint(0, Color.BLACK);  // Черная обводка
+        // Установка контуров для столбцов
+        renderer.setSeriesOutlinePaint(0, Color.BLACK);
+        renderer.setSeriesOutlineStroke(0, new BasicStroke(2.0f), true);
 
-        // Включаем отображение обводки
-        renderer.setSeriesOutlineStroke(0,new BasicStroke(2.0f),true);
+        // Ограничение ширины столбцов
+        renderer.setMaximumBarWidth(0.05);
+        renderer.setItemMargin(0.1); // Установка маржи между столбцами
 
-        renderer.setMaximumBarWidth(0.05); // Уменьшаем ширину столбцов
-        renderer.setItemMargin(0.1); // Устанавливаем промежуток между столбцами
-
-        // Применяем рендерер к графику
+        // Применение рендерера к графику
         plot.setRenderer(renderer);
 
-        // Сохраняем график в файл
+        // Сохранение графика в файл
         File chartFile = new File(filePath);
         ChartUtils.saveChartAsPNG(chartFile, chart, 1920, 1080);
         return chartFile;
