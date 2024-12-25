@@ -1,7 +1,7 @@
 package org.example.drawer;
 
 import org.example.model.Group;
-import org.example.mapper.ChartDataMapper;
+import org.example.mapper.ThemeDataMapper;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ChartPanel;
@@ -9,13 +9,8 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.CategoryDataset;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
 import org.springframework.web.client.RestTemplate;
 
 import javax.swing.*;
@@ -93,7 +88,7 @@ public class DrawerWindow extends JFrame {
 
     // Создаем график для всех тем (Scores by Themes)
     private JFreeChart createScoresByThemesChart(List<Group> groups) {
-        CategoryDataset dataset = ChartDataMapper.createScoresByThemes(groups);
+        CategoryDataset dataset = ThemeDataMapper.createScoresByThemes(groups);
         JFreeChart chart = ChartFactory.createLineChart(
                 "Scores by Themes",            // Заголовок графика
                 "Theme",                       // Ось X
@@ -112,7 +107,7 @@ public class DrawerWindow extends JFrame {
 
     // Создаем график для всех групп (Scores by Groups)
     private JFreeChart createScoresByGroupsChart(List<Group> groups) {
-        CategoryDataset dataset = ChartDataMapper.createScoresByGroups(groups);
+        CategoryDataset dataset = ThemeDataMapper.createScoresByGroups(groups);
         JFreeChart chart = ChartFactory.createBarChart(
                 "Scores by Groups",           // Заголовок графика
                 "Group",                      // Ось X
@@ -131,7 +126,7 @@ public class DrawerWindow extends JFrame {
 
     // Создаем график для конкретной темы
     private JFreeChart createChartForTheme(List<Group> groups, int themeNumber) {
-        CategoryDataset dataset = ChartDataMapper.createScoresThemesByGroups(groups, String.valueOf(themeNumber));
+        CategoryDataset dataset = ThemeDataMapper.createScoresThemesByGroups(groups, String.valueOf(themeNumber));
         JFreeChart chart = ChartFactory.createBarChart(
                 "Scores for Theme " + themeNumber,  // Заголовок графика
                 "Group",                           // Ось X

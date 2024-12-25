@@ -14,5 +14,14 @@ public class Student{
     private Integer finalScore;
     private List<Theme> scoreForThemes;
 
-
+    @Override
+    public String toString() {
+        return "Student{" +
+                "name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                ", group='" + group + '\'' +
+                ", finalScore=" + finalScore +
+                ", scoreForThemes=" + scoreForThemes +
+                '}';
+    }
 }

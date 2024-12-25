@@ -1,6 +1,6 @@
 package org.example.drawer;
 
-import org.example.mapper.ChartDataMapper;
+import org.example.mapper.ThemeDataMapper;
 import org.example.model.Group;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -18,55 +18,72 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * РљР»Р°СЃСЃ РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ РіСЂР°С„РёРєРѕРІ.
+ */
 public class Drawer {
     private String title;
 
+    /**
+     * РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°.
+     *
+     * @param title РќР°Р·РІР°РЅРёРµ РіСЂР°С„РёРєР°
+     */
     public Drawer(String title) {
         this.title = title;
     }
 
+    /**
+     * РњРµС‚РѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ Рё СЃРѕС…СЂР°РЅРµРЅРёСЏ Р»РёРЅРµР№РЅРѕРіРѕ РіСЂР°С„РёРєР°.
+     *
+     * @param groups РЎРїРёСЃРѕРє РіСЂСѓРїРї РґР»СЏ РїРѕСЃС‚СЂРѕРµРЅРёСЏ РіСЂР°С„РёРєР°
+     * @param filePath РџСѓС‚СЊ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РіСЂР°С„РёРєР°
+     * @return Р¤Р°Р№Р» СЃ РёР·РѕР±СЂР°Р¶РµРЅРёРµРј РіСЂР°С„РёРєР°
+     * @throws IOException РџСЂРё РІРѕР·РЅРёРєРЅРѕРІРµРЅРёРё РѕС€РёР±РѕРє СЃ С„Р°Р№Р»РѕРІС‹РјРё РѕРїРµСЂР°С†РёСЏРјРё
+     */
     public File createChartFile(List<Group> groups, String filePath) throws IOException {
-        CategoryDataset dataset = ChartDataMapper.createScoresByThemes(groups); // Используем новый метод
+        // РЎРѕР·РґР°РЅРёРµ РЅР°Р±РѕСЂР° РґР°РЅРЅС‹С… РЅР° РѕСЃРЅРѕРІРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ РіСЂСѓРїРїР°С…
+        CategoryDataset dataset = ThemeDataMapper.createScoresByThemes(groups);
+
+        // РЎРѕР·РґР°РЅРёРµ Р»РёРЅРµР№РЅРѕРіРѕ РіСЂР°С„РёРєР°
         JFreeChart chart = ChartFactory.createLineChart(
-                title,                 // Заголовок графика
-                "Theme",               // Ось X (Темы)
-                "Score",               // Ось Y (Баллы)
-                dataset,               // Данные
-                PlotOrientation.VERTICAL,  // Ориентация графика
-                true,                  // Легенда
-                true,                  // Инструменты
-                false                  // URL
+                title,                 // Р—Р°РіРѕР»РѕРІРѕРє РіСЂР°С„РёРєР°
+                "Theme",               // РћСЃСЊ X
+                "Score",               // РћСЃСЊ Y
+                dataset,               // Р”Р°РЅРЅС‹Рµ РґР»СЏ РіСЂР°С„РёРєР°
+                PlotOrientation.VERTICAL,  // РћСЂРёРµРЅС‚Р°С†РёСЏ РіСЂР°С„РёРєР°
+                true,                  // Р›РµРіРµРЅРґР°
+                true,                  // РџРѕРґСЃРєР°Р·РєРё
+                false                  // Р’РєР»СЋС‡РµРЅРёРµ СЃСЃС‹Р»РѕРє РЅР° URL
         );
 
-        chart.setBackgroundPaint(Color.WHITE);  // Белый фон для всего графика
+        chart.setBackgroundPaint(Color.WHITE);  // РЈСЃС‚Р°РЅРѕРІРєР° Р±РµР»РѕРіРѕ С„РѕРЅР° РґР»СЏ РіСЂР°С„РёРєР°
 
-        // Получаем CategoryPlot для настройки
+        // РќР°СЃС‚СЂРѕР№РєР° РІРЅРµС€РЅРµРіРѕ РІРёРґР° РіСЂР°С„РёРєР°
         CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.LIGHT_GRAY);
+        plot.setBackgroundPaint(Color.LIGHT_GRAY); // Р›РµРіРєРёР№ С„РѕРЅ РіСЂР°С„РёРєР°
 
-        // Настройка цвета и стиля сетки
-        plot.setDomainGridlinePaint(Color.BLACK);  // Вертикальная сетка
-        plot.setRangeGridlinePaint(Color.BLACK);   // Горизонтальная сетка
+        plot.setDomainGridlinePaint(Color.BLACK);  // Р›РёРЅРёРё СЃРµС‚РєРё РїРѕ РѕСЃРё X
+        plot.setRangeGridlinePaint(Color.BLACK);   // Р›РёРЅРёРё СЃРµС‚РєРё РїРѕ РѕСЃРё Y
 
-        // Настройка цветов линий
+        // РќР°СЃС‚СЂРѕР№РєР° СЃС‚РёР»СЏ РіСЂР°С„РёРєР°
         LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+        renderer.setSeriesPaint(0, Color.RED);      // Р¦РІРµС‚ Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 0
+        renderer.setSeriesPaint(1, Color.YELLOW);   // Р¦РІРµС‚ Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 1
+        renderer.setSeriesPaint(2, Color.ORANGE);    // Р¦РІРµС‚ Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 2
+        renderer.setSeriesPaint(3, Color.CYAN);     // Р¦РІРµС‚ Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 3
+        renderer.setSeriesPaint(4, Color.MAGENTA);  // Р¦РІРµС‚ Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 4
+        renderer.setSeriesPaint(5, Color.BLUE);     // Р¦РІРµС‚ Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 5
 
-        renderer.setSeriesPaint(0, Color.RED);      // Первая линия — красный
-        renderer.setSeriesPaint(1, Color.YELLOW);   // Вторая линия — желтый
-        renderer.setSeriesPaint(2, Color.ORANGE);    // Третья линия — зеленый
-        renderer.setSeriesPaint(3, Color.CYAN);     // Четвертая линия — голубой
-        renderer.setSeriesPaint(4, Color.MAGENTA);  // Пятая линия — фиолетовый
-        renderer.setSeriesPaint(5, Color.BLUE);     // Шестая линия — синий
+        // РЈСЃС‚Р°РЅРѕРІРєР° С‚РѕР»С‰РёРЅС‹ Р»РёРЅРёР№ РґР»СЏ РІСЃРµС… СЃРµСЂРёР№
+        renderer.setSeriesStroke(0, new BasicStroke(2.0f));  // РўРѕР»С‰РёРЅР° Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 0
+        renderer.setSeriesStroke(1, new BasicStroke(2.0f));  // РўРѕР»С‰РёРЅР° Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 1
+        renderer.setSeriesStroke(2, new BasicStroke(2.0f));  // РўРѕР»С‰РёРЅР° Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 2
+        renderer.setSeriesStroke(3, new BasicStroke(2.0f));  // РўРѕР»С‰РёРЅР° Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 3
+        renderer.setSeriesStroke(4, new BasicStroke(2.0f));  // РўРѕР»С‰РёРЅР° Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 4
+        renderer.setSeriesStroke(5, new BasicStroke(2.0f));  // РўРѕР»С‰РёРЅР° Р»РёРЅРёРё РґР»СЏ СЃРµСЂРёРё 5
 
-        // Настройка толщины линий для каждой серии
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f));  // Толщина линии для первой серии
-        renderer.setSeriesStroke(1, new BasicStroke(2.0f));  // Толщина линии для второй серии
-        renderer.setSeriesStroke(2, new BasicStroke(2.0f));  // Толщина линии для третьей серии
-        renderer.setSeriesStroke(3, new BasicStroke(2.0f));  // Толщина линии для четвертой серии
-        renderer.setSeriesStroke(4, new BasicStroke(2.0f));  // Толщина линии для пятой серии
-        renderer.setSeriesStroke(5, new BasicStroke(2.0f));  // Толщина линии для шестой серии
-
-        // Включаем отображение точек на линиях и меняем форму точек
+        // РЈСЃС‚Р°РЅРѕРІРєР° РІРёРґРёРјРѕСЃС‚Рё С‚РѕС‡РµРє РЅР° РіСЂР°С„РёРєРµ
         renderer.setSeriesShapesVisible(0, true);
         renderer.setSeriesShapesVisible(1, true);
         renderer.setSeriesShapesVisible(2, true);
@@ -74,71 +91,82 @@ public class Drawer {
         renderer.setSeriesShapesVisible(4, true);
         renderer.setSeriesShapesVisible(5, true);
 
-        // Настройка формы точек (пустой круг)
-        int circleSize = 10;  // Радиус круга
+        // РЈСЃС‚Р°РЅРѕРІРєР° С„РѕСЂРјС‹ С‚РѕС‡РµРє (РїСѓСЃС‚РѕР№ РєСЂСѓРі)
+        int circleSize = 10;
         Ellipse2D.Double emptyCircle = new Ellipse2D.Double((double) -circleSize / 2, (double) -circleSize / 2, circleSize, circleSize);
-        renderer.setSeriesShape(0, emptyCircle);  // Пустой круг для первой линии
-        renderer.setSeriesShape(1, emptyCircle);  // Пустой круг для второй линии
-        renderer.setSeriesShape(2, emptyCircle);  // Пустой круг для третьей линии
-        renderer.setSeriesShape(3, emptyCircle);  // Пустой круг для четвертой линии
-        renderer.setSeriesShape(4, emptyCircle);  // Пустой круг для пятой линии
-        renderer.setSeriesShape(5, emptyCircle);  // Пустой круг для шестой линии
+        renderer.setSeriesShape(0, emptyCircle);
+        renderer.setSeriesShape(1, emptyCircle);
+        renderer.setSeriesShape(2, emptyCircle);
+        renderer.setSeriesShape(3, emptyCircle);
+        renderer.setSeriesShape(4, emptyCircle);
+        renderer.setSeriesShape(5, emptyCircle);
 
-        // Применяем рендерер к графику
+        // РџСЂРёРјРµРЅРµРЅРёРµ СЂРµРЅРґРµСЂРµСЂР° Рє РіСЂР°С„РёРєСѓ
         chart.getCategoryPlot().setRenderer(renderer);
 
-        // Сохраняем график в файл
+        // РЎРѕС…СЂР°РЅРµРЅРёРµ РіСЂР°С„РёРєР° РІ С„Р°Р№Р»
         File chartFile = new File(filePath);
         ChartUtils.saveChartAsPNG(chartFile, chart, 1920, 1080);
         return chartFile;
     }
 
+    /**
+     * РњРµС‚РѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ Рё СЃРѕС…СЂР°РЅРµРЅРёСЏ РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅРѕРіРѕ СЃС‚РѕР»Р±С‡Р°С‚РѕРіРѕ РіСЂР°С„РёРєР° РґР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕР№ С‚РµРјС‹.
+     *
+     * @param groups РЎРїРёСЃРѕРє РіСЂСѓРїРї РґР»СЏ РїРѕСЃС‚СЂРѕРµРЅРёСЏ РіСЂР°С„РёРєР°
+     * @param themeNumber РќРѕРјРµСЂ С‚РµРјС‹ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ
+     * @param filePath РџСѓС‚СЊ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РіСЂР°С„РёРєР°
+     * @return Р¤Р°Р№Р» СЃ РёР·РѕР±СЂР°Р¶РµРЅРёРµРј РіСЂР°С„РёРєР°
+     * @throws IOException РџСЂРё РІРѕР·РЅРёРєРЅРѕРІРµРЅРёРё РѕС€РёР±РѕРє СЃ С„Р°Р№Р»РѕРІС‹РјРё РѕРїРµСЂР°С†РёСЏРјРё
+     */
     public File createChartFile(List<Group> groups, String themeNumber, String filePath) throws IOException {
-        CategoryDataset dataset = ChartDataMapper.createScoresThemesByGroups(groups, themeNumber);
+        // РЎРѕР·РґР°РЅРёРµ РЅР°Р±РѕСЂР° РґР°РЅРЅС‹С… РґР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕР№ С‚РµРјС‹
+        CategoryDataset dataset = ThemeDataMapper.createScoresThemesByGroups(groups, themeNumber);
+
+        // РЎРѕР·РґР°РЅРёРµ СЃС‚РѕР»Р±С‡Р°С‚РѕРіРѕ РіСЂР°С„РёРєР°
         JFreeChart chart = ChartFactory.createBarChart(
-                title,                 // Заголовок графика
-                "Group",               // Ось X (названия тем)
-                "Score",               // Ось Y (баллы)
-                dataset,               // Данные
-                PlotOrientation.HORIZONTAL, // Ориентация графика
-                true,                  // Легенда
-                true,                  // Инструменты
-                false                  // URL
+                title,                 // Р—Р°РіРѕР»РѕРІРѕРє РіСЂР°С„РёРєР°
+                "Group",               // РћСЃСЊ X (Р“СЂСѓРїРїС‹)
+                "Score",               // РћСЃСЊ Y (РћС†РµРЅРєРё)
+                dataset,               // Р”Р°РЅРЅС‹Рµ РґР»СЏ РіСЂР°С„РёРєР°
+                PlotOrientation.HORIZONTAL, // РћСЂРёРµРЅС‚Р°С†РёСЏ РіСЂР°С„РёРєР°
+                true,                  // Р›РµРіРµРЅРґР°
+                true,                  // РџРѕРґСЃРєР°Р·РєРё
+                false                  // Р’РєР»СЋС‡РµРЅРёРµ СЃСЃС‹Р»РѕРє РЅР° URL
         );
 
-        chart.setBackgroundPaint(Color.WHITE);  // Белый фон для всего графика
+        chart.setBackgroundPaint(Color.WHITE);  // РЈСЃС‚Р°РЅРѕРІРєР° Р±РµР»РѕРіРѕ С„РѕРЅР° РґР»СЏ РіСЂР°С„РёРєР°
 
-        // Получаем CategoryPlot для настройки
+        // РќР°СЃС‚СЂРѕР№РєР° РІРЅРµС€РЅРµРіРѕ РІРёРґР° РіСЂР°С„РёРєР°
         CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.LIGHT_GRAY);
+        plot.setBackgroundPaint(Color.LIGHT_GRAY); // Р›РµРіРєРёР№ С„РѕРЅ РіСЂР°С„РёРєР°
 
-        // Настройка цвета и стиля сетки
-        plot.setDomainGridlinePaint(Color.BLACK);  // Вертикальная сетка
-        plot.setRangeGridlinePaint(Color.BLACK);   // Горизонтальная сетка
+        plot.setDomainGridlinePaint(Color.BLACK);  // Р›РёРЅРёРё СЃРµС‚РєРё РїРѕ РѕСЃРё X
+        plot.setRangeGridlinePaint(Color.BLACK);   // Р›РёРЅРёРё СЃРµС‚РєРё РїРѕ РѕСЃРё Y
 
         BarRenderer renderer = new BarRenderer();
 
+        // РЈСЃС‚Р°РЅРѕРІРєР° С†РІРµС‚Р° РґР»СЏ СЃС‚РѕР»Р±С†РѕРІ
         renderer.setSeriesPaint(0, Color.GRAY);
 
-        // Убираем тени
+        // РћС‚РєР»СЋС‡РµРЅРёРµ С‚РµРЅРµР№ РґР»СЏ СЃС‚РѕР»Р±С†РѕРІ
         renderer.setShadowVisible(false);
 
-        // Отключаем эффект 3D, делаем столбцы плоскими
+        // РџСЂРёРјРµРЅРµРЅРёРµ 3D-СЌС„С„РµРєС‚Р° РґР»СЏ СЃС‚РѕР»Р±С†РѕРІ
         renderer.setBarPainter(new StandardBarPainter());
 
-        // Устанавливаем черную обводку для столбцов
-        renderer.setSeriesOutlinePaint(0, Color.BLACK);  // Черная обводка
+        // РЈСЃС‚Р°РЅРѕРІРєР° РєРѕРЅС‚СѓСЂРѕРІ РґР»СЏ СЃС‚РѕР»Р±С†РѕРІ
+        renderer.setSeriesOutlinePaint(0, Color.BLACK);
+        renderer.setSeriesOutlineStroke(0, new BasicStroke(2.0f), true);
 
-        // Включаем отображение обводки
-        renderer.setSeriesOutlineStroke(0,new BasicStroke(2.0f),true);
+        // РћРіСЂР°РЅРёС‡РµРЅРёРµ С€РёСЂРёРЅС‹ СЃС‚РѕР»Р±С†РѕРІ
+        renderer.setMaximumBarWidth(0.05);
+        renderer.setItemMargin(0.1); // РЈСЃС‚Р°РЅРѕРІРєР° РјР°СЂР¶Рё РјРµР¶РґСѓ СЃС‚РѕР»Р±С†Р°РјРё
 
-        renderer.setMaximumBarWidth(0.05); // Уменьшаем ширину столбцов
-        renderer.setItemMargin(0.1); // Устанавливаем промежуток между столбцами
-
-        // Применяем рендерер к графику
+        // РџСЂРёРјРµРЅРµРЅРёРµ СЂРµРЅРґРµСЂРµСЂР° Рє РіСЂР°С„РёРєСѓ
         plot.setRenderer(renderer);
 
-        // Сохраняем график в файл
+        // РЎРѕС…СЂР°РЅРµРЅРёРµ РіСЂР°С„РёРєР° РІ С„Р°Р№Р»
         File chartFile = new File(filePath);
         ChartUtils.saveChartAsPNG(chartFile, chart, 1920, 1080);
         return chartFile;

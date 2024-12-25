@@ -1,14 +1,11 @@
 package org.example.controller;
 
 import org.example.entity.GroupEntity;
-import org.example.entity.StudentEntity;
-import org.example.mapper.ChartDataMapper;
 import org.example.model.Group;
 import org.example.model.Student;
-import org.example.service.GroupService;
+import org.example.service.Service;
 import org.example.parser.parserCSV;
 import org.example.drawer.Drawer;
-import org.jfree.chart.JFreeChart;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -16,10 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -28,26 +23,36 @@ import java.util.List;
 @RequestMapping("/groups")
 public class GroupController {
 
-    private final GroupService groupService;
-    public final ModelMapper modelMapper;
+    private final Service groupService;
+    private final ModelMapper modelMapper;
 
-    public GroupController(GroupService groupService, ModelMapper modelMapper) {
+    public GroupController(Service groupService, ModelMapper modelMapper) {
         this.groupService = groupService;
         this.modelMapper = modelMapper;
     }
 
+    /**
+     * Получение всех групп.
+     *
+     * @return Список групп
+     */
     @GetMapping
     public List<Group> getGroups() {
         return groupService.findAll().stream().map(this::convertToGroup).toList();
     }
 
-    @GetMapping("/chart")
+    /**
+     * Генерация диаграммы по всем группам.
+     *
+     * @return Ресурс диаграммы
+     */
+    @GetMapping("/theme")
     public ResponseEntity<Resource> getBarChart() {
         try {
             Drawer drawer = new Drawer("Scores by Group");
-            File chartFile = drawer.createChartFile(getGroups(), "chart.png");
+            File chartFile = drawer.createChartFile(getGroups(), "theme.png");
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"chart.png\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"theme.png\"")
                     .contentType(MediaType.IMAGE_PNG)
                     .body(new FileSystemResource(chartFile));
         } catch (IOException e) {
@@ -55,11 +60,17 @@ public class GroupController {
         }
     }
 
-    @GetMapping("/chart/{id}")
+    /**
+     * Генерация диаграммы для конкретной группы.
+     *
+     * @param id ID группы
+     * @return Ресурс диаграммы
+     */
+    @GetMapping("/theme/{id}")
     public ResponseEntity<Resource> getBarChartForChapter(@PathVariable("id") String id) {
         try {
             Drawer drawer = new Drawer("Scores by Group");
-            File chartFile = drawer.createChartFile(getGroups(), id,"chart.png");
+            File chartFile = drawer.createChartFile(getGroups(), id, "chart.png");
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"chart.png\"")
                     .contentType(MediaType.IMAGE_PNG)
@@ -69,6 +80,12 @@ public class GroupController {
         }
     }
 
+    /**
+     * Преобразует объект GroupEntity в модель Group.
+     *
+     * @param groupEntity Сущность группы
+     * @return Модель группы
+     */
     public Group convertToGroup(GroupEntity groupEntity) {
         Group group = modelMapper.map(groupEntity, Group.class);
         group.setName(groupEntity.getName().replace("Программирование на Java ЛБ, ", ""));
@@ -76,6 +93,11 @@ public class GroupController {
         return group;
     }
 
+    /**
+     * Загрузка студентов из CSV-файла и сохранение их в базу данных.
+     *
+     * @return Ответ о успешном сохранении
+     */
     @PostMapping("/upload")
     public ResponseEntity<String> saveStudents() {
         List<Student> students = parserCSV.readCSVFile("java-rtf.csv");
